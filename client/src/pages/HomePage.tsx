@@ -8,8 +8,7 @@ import { Loader2, AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
 
 export function HomePage() {
-  const { tasks, isLoadingTasks, tasksError, deleteTask, deleteTaskError } =
-    useTasks();
+  const { tasks, isLoadingTasks, tasksError, deleteTask } = useTasks();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -51,15 +50,13 @@ export function HomePage() {
   }).format(new Date());
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] pb-20">
+    <div className="min-h-screen bg-[#F4F5F7] pb-20">
       <Navbar onAddTaskClick={() => handleOpenNewTask("pending")} />
 
       <main className="pt-24 px-6 max-w-7xl mx-auto">
         {/* Workspace Header Section Header */}
         <div className="mb-10">
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">
-            My Workspace
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900">My Workspace</h1>
           <p className="text-sm text-gray-600 mt-1">{today}</p>
         </div>
 

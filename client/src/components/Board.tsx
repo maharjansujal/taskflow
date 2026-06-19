@@ -76,7 +76,7 @@ export function Board({
                 <h2 className="font-bold text-sm text-gray-900 tracking-tight">
                   {column.title}
                 </h2>
-                <span className="bg-gray-100 text-gray-500 font-semibold text-xs px-2 py-0.5 rounded-md">
+                <span className="bg-gray-200 text-gray-500 font-semibold text-xs px-2 py-0.5 rounded-md">
                   {columnTasks.length}
                 </span>
               </div>
@@ -101,8 +101,8 @@ export function Board({
                   />
                 ))
               ) : (
-                <div className="border border-dashed border-gray-200 rounded-2xl py-8 text-center text-xs text-gray-400 font-medium bg-gray-50/50">
-                  No tasks here
+                <div className="border-2 border-dashed border-slate-950/8 rounded-lg p-6 text-center">
+                  <p className="text-xs">No tasks here</p>
                 </div>
               )}
             </div>

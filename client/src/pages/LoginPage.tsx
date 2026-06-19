@@ -36,7 +36,7 @@ export function LoginPage() {
           <CheckSquare className="w-6 h-6" />
         </div>
         <span className="text-xl font-bold text-gray-900 tracking-tight">
-          Taskr
+          TaskFow
         </span>
       </div>
 

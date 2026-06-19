@@ -46,7 +46,7 @@ export function StatsSummary({ tasks = [] }: StatsSummaryProps) {
         return (
           <div
             key={idx}
-            className="bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.01)] flex items-center gap-5"
+            className="bg-white p-6 rounded-2xl border border-gray-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] flex items-center gap-5"
           >
             <div
               className={`p-3.5 rounded-xl ${card.bgColor} ${card.iconColor} flex items-center justify-center shrink-0`}
@@ -55,10 +55,10 @@ export function StatsSummary({ tasks = [] }: StatsSummaryProps) {
             </div>
 
             <div className="flex flex-col gap-0.5">
-              <span className="text-2xl font-black text-gray-900 tracking-tight">
+              <span className="text-2xl font-bold text-gray-900">
                 {card.value}
               </span>
-              <span className="text-xs font-semibold text-gray-400 tracking-wide">
+              <span className="text-xs font-semibold text-gray-400">
                 {card.title}
               </span>
             </div>

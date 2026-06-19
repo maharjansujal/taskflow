@@ -46,7 +46,7 @@ export function RegisterPage() {
           <CheckSquare className="w-6 h-6" />
         </div>
         <span className="text-xl font-bold text-gray-900 tracking-tight">
-          Taskr
+          TaskFlow
         </span>
       </div>
 

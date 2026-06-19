@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { X, Loader2, Trash2 } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 import { type Task, useTasks } from "../hooks/useTasks";
 import { TextField } from "./TextField";
+import type { AxiosError } from "axios";
+import toast from "react-hot-toast";
 
 interface TaskModalProps {
   isOpen: boolean;
   onClose: () => void;
-  editTask: Task | null; // If null, we are creating a task; if provided, we are editing
-  initialStatus?: Task["status"]; // If adding from a specific column lane
+  editTask: Task | null;
+  initialStatus?: Task["status"];
 }
 
 export function TaskModal({
@@ -16,7 +18,7 @@ export function TaskModal({
   editTask,
   initialStatus = "pending",
 }: TaskModalProps) {
-  const { addTask, updateTask, deleteTask } = useTasks();
+  const { addTask, updateTask } = useTasks();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -41,8 +43,7 @@ export function TaskModal({
 
   if (!isOpen) return null;
 
-  const isPending =
-    addTask.isPending || updateTask.isPending || deleteTask.isPending;
+  const isPending = addTask.isPending || updateTask.isPending;
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
@@ -63,22 +64,15 @@ export function TaskModal({
         await addTask.mutateAsync({ title, description, status, priority });
       }
       onClose();
-    } catch (err: any) {
-      setError(
-        err?.response?.data?.error || "Something went wrong. Please try again.",
+      toast.success(
+        `${editTask ? "Task edited successfully" : "Task created successfully"} `,
       );
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!editTask) return;
-    if (!window.confirm("Are you sure you want to delete this task?")) return;
-
-    try {
-      await deleteTask.mutateAsync(editTask.id);
-      onClose();
-    } catch (err: any) {
-      setError(err?.response?.data?.error || "Failed to delete task.");
+    } catch (err) {
+      const error = err as AxiosError<{ error?: string }>;
+      setError(
+        error.response?.data?.error ??
+          "Something went wrong. Please try again.",
+      );
     }
   };
 
@@ -89,7 +83,7 @@ export function TaskModal({
         onClick={!isPending ? onClose : undefined}
       />
 
-      <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl border border-gray-100 p-6 z-10 relative flex flex-col gap-5 animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-white w-full max-w-lg rounded-xl shadow-xl border border-gray-100 p-6 z-10 relative flex flex-col gap-5 animate-in fade-in zoom-in-95 duration-150">
         <div className="flex items-center justify-between pb-2 border-b border-gray-100">
           <h2 className="text-xl font-bold text-gray-900 tracking-tight">
             {editTask ? "Edit Task" : "Create New Task"}
@@ -113,7 +107,7 @@ export function TaskModal({
           <TextField
             label="Task Title"
             type="text"
-            placeholder="Write a clear name..."
+            placeholder="Enter title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             disabled={isPending}
@@ -124,7 +118,7 @@ export function TaskModal({
               Description
             </label>
             <textarea
-              placeholder="Add extra contextual details..."
+              placeholder="Task description"
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -169,39 +163,23 @@ export function TaskModal({
             </div>
           </div>
 
-          <div className="flex items-center justify-between mt-2 pt-4 border-t border-gray-100">
-            <div>
-              {editTask && (
-                <button
-                  type="button"
-                  onClick={handleDelete}
-                  disabled={isPending}
-                  className="px-3 py-2 text-red-600 hover:bg-red-50 font-semibold text-sm rounded-xl flex items-center gap-1.5 transition-colors disabled:opacity-40"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  <span>Delete</span>
-                </button>
-              )}
-            </div>
-
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={onClose}
-                disabled={isPending}
-                className="px-5 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-700 cursor-pointer font-semibold text-sm rounded-xl transition-all disabled:opacity-40"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isPending}
-                className="px-5 py-2.5 bg-[#4f46e5] hover:bg-[#4338ca] text-white font-semibold cursor-pointer text-sm rounded-xl transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50"
-              >
-                {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
-                <span>{editTask ? "Save Changes" : "Create Task"}</span>
-              </button>
-            </div>
+          <div className="w-full flex items-center justify-end gap-x-4 mt-2 pt-4 border-t border-gray-100">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isPending}
+              className="px-5 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-700 cursor-pointer font-semibold text-sm rounded-xl transition-all disabled:opacity-40"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isPending}
+              className="px-5 py-2.5 bg-[#4f46e5] hover:bg-[#4338ca] text-white font-semibold cursor-pointer text-sm rounded-xl transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50"
+            >
+              {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
+              <span>{editTask ? "Save Changes" : "Create Task"}</span>
+            </button>
           </div>
         </form>
       </div>
