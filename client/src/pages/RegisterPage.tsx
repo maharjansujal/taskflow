@@ -1,54 +1,43 @@
 import React, { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { TextField } from "../components/TextField";
-import { CheckSquare, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { normalizeError } from "../utils/formatError";
+import { Logo } from "../components/Logo";
+import toast from "react-hot-toast";
 
 export function RegisterPage() {
   const { registerUser, isRegistering, registerError } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [validationError, setValidationError] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
-    setValidationError("");
 
     if (!name || !email || !password) {
-      setValidationError("Please fill in all fields.");
+      toast.error("Please fill in all the required fields");
       return;
     }
 
     if (password.length < 6) {
-      setValidationError("Password must be at least 6 characters long.");
+      toast.error("Password must be at least 6 characters long");
       return;
     }
 
-    try {
-      await registerUser({ name, email, password });
-      setIsSuccess(true);
-      setName("");
-      setEmail("");
-      setPassword("");
-    } catch (err) {
-      // Handled globally by TanStack Query
-    }
-  };
+    await registerUser({ name, email, password });
 
-  const errorMessage = normalizeError(registerError) || validationError;
+    setIsSuccess(true);
+    setName("");
+    setEmail("");
+    setPassword("");
+  };
+  const errorMessage = normalizeError(registerError);
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-4">
-      <div className="flex items-center gap-2 mb-8">
-        <div className="bg-[#4f46e5] p-2 rounded-xl text-white shadow-sm">
-          <CheckSquare className="w-6 h-6" />
-        </div>
-        <span className="text-xl font-bold text-gray-900 tracking-tight">
-          TaskFlow
-        </span>
-      </div>
+      <Logo />
 
       <div className="w-full max-w-110 bg-white p-8 rounded-2xl border border-gray-200 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]">
         <div className="mb-6">
@@ -82,7 +71,7 @@ export function RegisterPage() {
           <TextField
             label="Full Name"
             type="text"
-            placeholder="Alex Rivera"
+            placeholder="Your Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             disabled={isRegistering}
@@ -91,7 +80,7 @@ export function RegisterPage() {
           <TextField
             label="Email"
             type="email"
-            placeholder="you@example.com"
+            placeholder="Your Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={isRegistering}

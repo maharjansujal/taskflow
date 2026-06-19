@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { CheckSquare, Plus, LogOut, ChevronDown } from "lucide-react";
+import { Plus, LogOut, ChevronDown } from "lucide-react";
+import { Logo } from "./Logo";
 
 interface NavbarProps {
   onAddTaskClick: () => void;
@@ -37,14 +38,7 @@ export function Navbar({ onAddTaskClick }: NavbarProps) {
   return (
     <header className="bg-white border-b border-gray-100 h-16 fixed top-0 left-0 right-0 z-40 flex items-center justify-center">
       <div className="w-full flex items-center justify-between max-w-7xl px-6">
-        <div className="flex items-center gap-2">
-          <div className="bg-[#4f46e5] p-1.5 rounded-lg text-white shadow-sm">
-            <CheckSquare className="w-5 h-5" />
-          </div>
-          <span className="text-lg font-bold text-gray-900 tracking-tight">
-            TaskFlow
-          </span>
-        </div>
+        <Logo />
 
         <div className="flex items-center gap-4">
           <button

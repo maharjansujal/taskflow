@@ -43,6 +43,8 @@ export function useAuth() {
     },
   });
 
+  console.log(registerMutation);
+
   return {
     user,
     isAuthenticated,
