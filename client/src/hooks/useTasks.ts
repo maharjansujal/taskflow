@@ -18,7 +18,7 @@ export function useTasks() {
     queryKey: ["tasks"],
     queryFn: async () => {
       const response = await axiosInstance.get("/tasks");
-      return response.data;
+      return response.data.tasks;
     },
   });
 
