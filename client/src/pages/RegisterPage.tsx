@@ -4,33 +4,43 @@ import { TextField } from "../components/TextField";
 import { CheckSquare, Loader2 } from "lucide-react";
 import { normalizeError } from "../utils/formatError";
 
-export function LoginPage() {
-  const { loginUser, isLoggingIn, loginError } = useAuth();
+export function RegisterPage() {
+  const { registerUser, isRegistering, registerError } = useAuth();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [validationError, setValidationError] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setValidationError("");
 
-    if (!email || !password) {
+    if (!name || !email || !password) {
       setValidationError("Please fill in all fields.");
       return;
     }
 
+    if (password.length < 6) {
+      setValidationError("Password must be at least 6 characters long.");
+      return;
+    }
+
     try {
-      await loginUser({ email, password });
+      await registerUser({ name, email, password });
+      setIsSuccess(true);
+      setName("");
+      setEmail("");
+      setPassword("");
     } catch (err) {
       // Handled globally by TanStack Query
     }
   };
 
-  const errorMessage = normalizeError(loginError) || validationError;
+  const errorMessage = normalizeError(registerError) || validationError;
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-4">
-      {/* Logo Head */}
       <div className="flex items-center gap-2 mb-8">
         <div className="bg-[#4f46e5] p-2 rounded-xl text-white shadow-sm">
           <CheckSquare className="w-6 h-6" />
@@ -43,14 +53,14 @@ export function LoginPage() {
       <div className="w-full max-w-110 bg-white p-8 rounded-2xl border border-gray-200 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
-            Welcome back
+            Create account
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Sign in to your workspace
+            Start managing your tasks today
           </p>
         </div>
 
-        <hr className="border-gray-300 mb-6" />
+        <hr className="border-gray-200 mb-6" />
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           {errorMessage && (
@@ -59,48 +69,67 @@ export function LoginPage() {
             </div>
           )}
 
+          {isSuccess && (
+            <div className="bg-green-50 text-green-600 p-3 rounded-xl text-xs font-medium border border-green-100">
+              Account created successfully! You can now{" "}
+              <a href="/login" className="underline font-bold">
+                Sign In
+              </a>
+              .
+            </div>
+          )}
+
+          <TextField
+            label="Full Name"
+            type="text"
+            placeholder="Alex Rivera"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            disabled={isRegistering}
+          />
+
           <TextField
             label="Email"
             type="email"
-            placeholder="sujal@example.com"
+            placeholder="you@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            disabled={isLoggingIn}
+            disabled={isRegistering}
           />
 
           <TextField
             label="Password"
             type="password"
-            placeholder="••••••••"
+            placeholder="Min. 6 characters"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            disabled={isLoggingIn}
+            disabled={isRegistering}
           />
 
           <button
             type="submit"
-            disabled={isLoggingIn}
-            className="w-full mt-2 cursor-pointer bg-[#4f46e5] hover:bg-[#4338ca] text-white py-3 rounded-xl font-semibold text-sm transition-all shadow-sm active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2"
+            disabled={isRegistering}
+            className="w-full mt-2 bg-[#4f46e5] hover:bg-[#4338ca] text-white py-3 rounded-xl font-semibold text-sm transition-all shadow-sm active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2"
           >
-            {isLoggingIn ? (
+            {isRegistering ? (
               <>
                 <Loader2 className="animate-spin h-4 w-4" />
-                Signing In...
+                Creating Account...
               </>
             ) : (
-              "Sign In"
+              "Create Account"
             )}
           </button>
         </form>
 
         <div className="mt-6 text-center">
           <p className="text-xs text-gray-500">
-            Don't have an account?{" "}
+            Already have an account?{" "}
             <a
-              href="/register"
+              href="/login"
               className="text-[#4f46e5] font-semibold hover:underline ml-0.5"
             >
-              Register
+              Sign in
             </a>
           </p>
         </div>
