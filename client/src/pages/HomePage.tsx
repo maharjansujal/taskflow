@@ -80,7 +80,7 @@ export function HomePage() {
             </div>
             <button
               onClick={() => window.location.reload()}
-              className="bg-red-600 text-white px-6 py-2 rounded-xl text-sm font-bold hover:bg-red-700 transition-colors"
+              className="bg-red-600 text-white px-6 py-2 rounded-xl text-sm font-bold hover:bg-red-700 transition-colors cursor-pointer"
             >
               Retry
             </button>

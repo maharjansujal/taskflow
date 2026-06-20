@@ -15,7 +15,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           htmlFor={inputId}
           className="text-[11px] font-bold tracking-wider text-gray-800 uppercase"
         >
-          {label}
+          {label} {props.required && <span className="text-red-500">*</span>}
         </label>
         <input
           id={inputId}

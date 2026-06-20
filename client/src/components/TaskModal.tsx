@@ -111,6 +111,7 @@ export function TaskModal({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             disabled={isPending}
+            required
           />
 
           <div className="w-full flex flex-col gap-2">
