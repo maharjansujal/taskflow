@@ -43,10 +43,10 @@ export function Navbar({ onAddTaskClick }: NavbarProps) {
         <div className="flex items-center gap-4">
           <button
             onClick={onAddTaskClick}
-            className="bg-[#4f46e5] hover:bg-[#4338ca] text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all shadow-sm active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
+            className="bg-[#4f46e5] hover:bg-[#4338ca] text-white px-2 lg:px-4 py-2 rounded-xl text-sm font-semibold transition-all shadow-sm active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
-            <span>New Task</span>
+            <span className="hidden md:block">New Task</span>
           </button>
 
           {/* Profile Dropdown Component Container */}

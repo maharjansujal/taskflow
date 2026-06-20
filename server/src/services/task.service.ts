@@ -36,31 +36,53 @@ export const getAllTasksService = async (userId: number) => {
 export const updateTaskService = async ({
   id,
   userId,
-  title,
-  description,
-  status,
-  priority,
+  updates,
 }: {
   id: number;
   userId: number;
-  title?: string;
-  description?: string;
-  status?: Status;
-  priority?: Priority;
+  updates: {
+    title?: string;
+    description?: string | null;
+    status?: Status;
+    priority?: Priority;
+  };
 }) => {
+  const setClauses: string[] = [];
+  const values = [];
+  let paramIndex = 1;
+
+  // Track always-updating metadata field
+  setClauses.push(`updated_at = CURRENT_TIMESTAMP`);
+
+  // Dynamically iterate through keys to build safe relational parameters
+  for (const [key, value] of Object.entries(updates)) {
+    // Ensure we only touch fields that belong in the database columns
+    if (["title", "description", "status", "priority"].includes(key)) {
+      setClauses.push(`${key} = $${paramIndex}`);
+      values.push(value);
+      paramIndex++;
+    }
+  }
+
+  // If no updates were actually provided, skip database operation and fetch the current record
+  if (values.length === 0) {
+    const fallbackQuery = `SELECT * FROM tasks WHERE id = $1 AND user_id = $2;`;
+    const fallbackResult = await pool.query(fallbackQuery, [id, userId]);
+    return fallbackResult.rows[0];
+  }
+
+  // Inject ID and UserID at the tail end of the parameters array
+  values.push(id, userId);
+  const idParam = `$${paramIndex}`;
+  const userIdParam = `$${paramIndex + 1}`;
+
   const query = `
-            UPDATE tasks
-SET
-    title = COALESCE($1, title),
-    description = COALESCE($2, description),
-    status = COALESCE($3, status),
-    priority = COALESCE($4, priority),
-    updated_at = CURRENT_TIMESTAMP
-WHERE id = $5
-  AND user_id = $6
-RETURNING *;
-        `;
-  const values = [title, description, status, priority, id, userId];
+    UPDATE tasks
+    SET ${setClauses.join(", ")}
+    WHERE id = ${idParam} AND user_id = ${userIdParam}
+    RETURNING *;
+  `;
+
   const result = await pool.query(query, values);
   return result.rows[0];
 };

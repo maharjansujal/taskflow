@@ -56,19 +56,29 @@ export const updateTask = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(401).json({ error: "User not logged in" });
     }
     const { id } = req.params;
-    if (Array.isArray(id)) {
-      return res.status(422).json({ error: "Invalid task id" });
+    if (Array.isArray(id) || isNaN(Number(id))) {
+      return res.status(422).json({ error: "Invalid task id format" });
     }
+
     const { title, description, status, priority } = req.body;
+    const updates: Record<string, any> = {};
+
+    if (title !== undefined) updates.title = title;
+    if (description !== undefined)
+      updates.description = description === "" ? null : description;
+    if (status !== undefined) updates.status = status;
+    if (priority !== undefined) updates.priority = priority;
 
     const updatedTask = await updateTaskService({
       id: Number(id),
       userId,
-      title,
-      description,
-      priority,
-      status,
+      updates,
     });
+
+    if (!updatedTask) {
+      return res.status(404).json({ error: "Task not found or unauthorized" });
+    }
+
     return res
       .status(200)
       .json({ message: "Task updated successfully", updatedTask });
